@@ -1,0 +1,217 @@
+Program.s
+	//The following code is only run once when power on, and is generally used for global variable definition and power on initialization data
+	int sys0=0,sys1=0,sys2=0,sys3=0     //At present, the definition of global variable only supports 4-byte signed integer (int), and other types of global quantity declaration are not supported. If you want to use string type, you can use variable control in the page to implement
+	int r=0,g=0,b=0
+	int h=0,s=0,v=0
+	int p=0,q=0,t=0,f=0
+	int xcoord=0,ycoord=0
+	int xstart=0,ystart=0
+	int xsize=0,ysize=0
+	int dispred=0
+	page 0                       //Power on start page 0
+
+The following text has been created using the Nextion2Text Tool from https://github.com/MMMZZZZ/Nextion2Text
+Page page0
+    Events
+        Preinitialize Event
+            // for easier typing (no .val) all variables are defined in the Program.s file
+            //
+            // Position of the color field
+            xstart=colorField.x
+            ystart=colorField.y
+            // Size of the color field
+            xsize=colorField.w
+            ysize=colorField.h
+            // resolution of the color field (affects drawing time, not color selection)
+            dispred=8
+            //
+            // Hide functions
+            vis hsv2rgb,0
+            vis coord2hs,0
+            vis rgb16,0
+        
+        Postinitialize Event
+            // Draw color field
+            v=255
+            for(xcoord=0;xcoord<xsize;xcoord+=dispred)
+            {
+                for(ycoord=0;ycoord<ysize;ycoord+=dispred)
+                {
+                    click coord2hs,0
+                    click hsv2rgb,0
+                    click rgb16,0
+                    fill xstart+xcoord,ystart+ycoord,dispred,dispred,rgb16.val
+                }
+            }
+        
+        Touch Press Event
+            
+        Touch Release Event
+            
+        Page Exit Event
+            
+    Components
+        Hotspot hsv2rgb
+            Events
+                Touch Press Event
+                    
+                Touch Release Event
+                    // https://de.wikipedia.org/wiki/HSV-Farbraum#Umrechnung_HSV_in_RGB
+                    // The values range from 0..255 instead of 0..1
+                    // h ranges from 0..(6*256)
+                    if(s>=256)
+                    {
+                        s=255
+                    }else if(s<0)
+                    {
+                        s=0
+                    }
+                    if(v>=256)
+                    {
+                        v=255
+                    }else if(v<0)
+                    {
+                        v=0
+                    }
+                    f=h&0xff
+                    p=256-s
+                    p*=v
+                    p=p>>8// / 256
+                    q=s*f// 0-256*256 = 0-65536
+                    q=65536-q
+                    q*=v
+                    q=q>>16
+                    t=256-f
+                    t*=s
+                    t=65536-t
+                    t*=v
+                    t=t>>16
+                    //
+                    f=h>>8
+                    if(f==1)
+                    {
+                        r=q
+                        g=v
+                        b=p
+                    }else if(f==2)
+                    {
+                        r=p
+                        g=v
+                        b=t
+                    }else if(f==3)
+                    {
+                        r=p
+                        g=q
+                        b=v
+                    }else if(f==4)
+                    {
+                        r=t
+                        g=p
+                        b=v
+                    }else if(f==5)
+                    {
+                        r=v
+                        g=p
+                        b=q
+                    }else
+                    {
+                        r=v
+                        g=t
+                        b=p
+                    }
+                
+        Hotspot colorField
+            Events
+                Touch Press Event
+                    xcoord=tch0-xstart
+                    ycoord=tch1-ystart
+                    click coord2hs,0
+                
+                Touch Release Event
+                    click hsv2rgb,0
+                    click rgb16,0
+                    result.bco=rgb16.val
+                    //
+                    sys0=r+g+b
+                    sys0/=3
+                    sys0+=128
+                    if(sys0>=256)
+                    {
+                        sys0-=256
+                    }
+                    r=sys0
+                    g=sys0
+                    b=sys0
+                    click rgb16,0
+                    result.pco=rgb16.val
+                
+        Hotspot coord2hs
+            Events
+                Touch Press Event
+                    
+                Touch Release Event
+                    h=xcoord*256*6
+                    h/=xsize
+                    s=ycoord*256
+                    s/=ysize
+                
+        Text result
+            Properties
+                Scope       : Local
+                Initial Text: "Your color"
+                Max. length : 20
+            
+            Events
+                Touch Press Event
+                    
+                Touch Release Event
+                    
+        Slider value
+            Properties
+                Scope           : Local
+                Initial Position: 255
+                Lower End       : 0
+                Upper End       : 255
+            
+            Events
+                Touch Press Event
+                    v=value.val
+                
+                Touch Release Event
+                    click colorField,0
+                
+                Touch Move
+                    v=value.val
+                
+        Number rgb16
+            Properties
+                Scope        : Local
+                Initial Value: 0
+            
+            Events
+                Touch Press Event
+                    
+                Touch Release Event
+                    r=r&0xff
+                    g=g&0xff
+                    b=b&0xff
+                    sys1=r>>3
+                    sys2=sys1<<6
+                    sys1=g>>2
+                    sys2+=sys1
+                    sys2=sys2<<5
+                    sys1=b>>3
+                    sys2+=sys1
+                    rgb16.val=sys2
+                
+        Text t0
+            Properties
+                Scope       : Local
+                Initial Text: "<= Slider could be nicer, \r\n      I know..."
+                Max. length : 50
+            
+            Events
+                Touch Press Event
+                    
+                Touch Release Event
+                    
