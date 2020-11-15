@@ -1,6 +1,6 @@
 # Shortlink Generator for GitHub Markdown Files
 
-This Python script generates shortlinks to every header of a markdown file using GitHubs shortlink service [git.io](https://git.io).
+This Python script generates shortlinks to every header of a markdown file using GitHubs shortlink service [git.io](https://git.io). Resulting links can be printed to the console and/or stored in a json file.
 
 ## Requirements
 
@@ -24,7 +24,12 @@ python GithubMDShortlinkGen.py --onlinefile "https://github.com/MMMZZZ/Random-St
 
 You get
 ```
-tbd
+# Shortlink Generator for GitHub Markdown Files: https://git.io/JkZnM
+## Requirements                                : https://git.io/JkZnD
+## Usage                                       : https://git.io/JkZnS
+### Example                                    : https://git.io/JkZn9
+## License                                     : https://git.io/JkZnH
+
 ```
 
 ## License
