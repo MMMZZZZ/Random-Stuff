@@ -19,7 +19,7 @@ It will display the help, explaining all the options.
 
 Using 
 ```
-python GithubMDShortlinkGen.py --onlinefile "https://github.com/MMMZZZ/Random-Stuff/GitHub%20Markdown%20Shortlink%20Generator/README.md"
+python GithubMDShortlinkGen.py --onlinefile "https://github.com/MMMZZZZ/Random-Stuff/blob/master/GitHub%20Markdown%20Shortlink%20Generator/README.md"
 ```
 
 You get
