@@ -1,0 +1,130 @@
+Page Simple_Version
+    Attributes
+        ID               : 0
+        Scope            : local
+        Send Component ID: disabled
+        Locked           : no
+    
+    Events
+        Preinitialize Event
+            tm0.en=0
+        
+Variable (int32) dir
+    Attributes
+        ID   : 2
+        Scope: local
+        Value: 1
+    
+Variable (int32) speed
+    Attributes
+        ID   : 6
+        Scope: local
+        Value: 1
+    
+Variable (int32) basePer
+    Attributes
+        ID   : 7
+        Scope: local
+        Value: 500
+    
+Number n0
+    Attributes
+        ID                 : 3
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Value              : 2605
+    
+Text t0
+    Attributes
+        ID                 : 8
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Text               : Very simple velocity control. Increments the value \r\nfaster and faster. Limited by Nextions execution \r\nspeed, thus not suitable for huge ranges.\r\nStep size can be adjusted by setting dir to \r\nsomething else than +/-1 (button press events).
+        Max. Text Size     : 300
+    
+Button b0
+    Attributes
+        ID               : 4
+        Scope            : local
+        Send Component ID: disabled
+        State            : unpressed
+        Text             : <
+        Max. Text Size   : 10
+    
+    Events
+        Touch Press Event
+            // Initialize timer period and counter speed
+            // The initial speed val affects how and how fast the speed will ramp up. Play with it!
+            speed.val=2
+            tm0.tim=basePer.val
+            //
+            // Set step size and direction (sign)
+            dir.val=-1
+            //
+            // Let the counting begin
+            tm0.en=1
+            //
+            // Do at least 1 step
+            n0.val+=dir.val
+        
+        Touch Release Event
+            // Button released, stop counting.
+            tm0.en=0
+        
+Button b1
+    Attributes
+        ID               : 5
+        Scope            : local
+        Send Component ID: disabled
+        State            : unpressed
+        Text             : >
+        Max. Text Size   : 10
+    
+    Events
+        Touch Press Event
+            // Initialize timer period and counter speed
+            // The initial speed val affects how and how fast the speed will ramp up. Play with it!
+            speed.val=2
+            tm0.tim=basePer.val
+            //
+            // Set step size and direction (sign)
+            dir.val=1
+            //
+            // Let the counting begin
+            tm0.en=1
+            //
+            // Do at least 1 step
+            n0.val+=dir.val
+        
+        Touch Release Event
+            // Button released, stop counting.
+            tm0.en=0
+        
+Button b2
+    Attributes
+        ID               : 9
+        Scope            : local
+        Send Component ID: disabled
+        State            : unpressed
+        Text             : Show Better Example
+        Max. Text Size   : 50
+    
+    Events
+        Touch Release Event
+            page 1
+        
+Timer tm0
+    Attributes
+        ID         : 1
+        Scope      : local
+        Period (ms): 50
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            n0.val+=dir.val
+            speed.val++
+            tm0.tim=basePer.val/speed.val
+        

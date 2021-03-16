@@ -1,0 +1,177 @@
+Page Better_Version
+    Attributes
+        ID               : 0
+        Scope            : local
+        Send Component ID: disabled
+        Locked           : no
+    
+    Events
+        Preinitialize Event
+            // General notes
+            // The minimum period supported by the timer component is 50ms. While it is possible to go lower
+            // I wouldn't recommend it.
+            // basePer should be a multiple of those 50ms to make this code run as smooth as possible
+            tm0.en=0
+            maxCountSpeed.val=basePer.val*inertia.val/50
+        
+Variable (int32) dir
+    Attributes
+        ID   : 2
+        Scope: local
+        Value: 1
+    
+Variable (int32) speed
+    Attributes
+        ID   : 6
+        Scope: local
+        Value: 1
+    
+Variable (int32) basePer
+    Attributes
+        ID   : 7
+        Scope: local
+        Value: 500
+    
+Variable (int32) stepSize
+    Attributes
+        ID   : 9
+        Scope: local
+        Value: 1
+    
+Variable (int32) maxCountSpeed
+    Attributes
+        ID   : 10
+        Scope: local
+        Value: 1
+    
+Variable (int32) countSpeed
+    Attributes
+        ID   : 12
+        Scope: local
+        Value: 1
+    
+Variable (int32) maxSpeed
+    Attributes
+        ID   : 13
+        Scope: local
+        Value: 100
+    
+Variable (int32) inertia
+    Attributes
+        ID   : 14
+        Scope: local
+        Value: 2
+    
+Number n0
+    Attributes
+        ID                 : 3
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Value              : 2605
+    
+Text t0
+    Attributes
+        ID                 : 8
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Text               : Better velocity control. Infinitely increases\r\neffective speed by adjusting the step size\r\non-the-fly. Speed can be limited by "maxSpeed"\r\nand slowed down by increasing "inertia".
+        Max. Text Size     : 300
+    
+Button b0
+    Attributes
+        ID               : 4
+        Scope            : local
+        Send Component ID: disabled
+        State            : unpressed
+        Text             : <
+        Max. Text Size   : 10
+    
+    Events
+        Touch Press Event
+            // Initialize timer period and counter speed
+            // The initial speed val affects how and how fast the speed will ramp up. Play with it!
+            speed.val=2
+            tm0.tim=basePer.val
+            //
+            // Set step size and direction (sign)
+            dir.val=-1
+            stepSize.val=1
+            //
+            // Let the counting begin
+            tm0.en=1
+            //
+            // Do at least 1 step
+            n0.val+=dir.val
+        
+        Touch Release Event
+            // Button released, stop counting.
+            tm0.en=0
+        
+Button b1
+    Attributes
+        ID               : 5
+        Scope            : local
+        Send Component ID: disabled
+        State            : unpressed
+        Text             : >
+        Max. Text Size   : 10
+    
+    Events
+        Touch Press Event
+            // Initialize timer period and counter speed
+            // The initial speed val affects how and how fast the speed will ramp up. Play with it!
+            speed.val=2
+            tm0.tim=basePer.val
+            //
+            // Set step size and direction (sign)
+            dir.val=1
+            stepSize.val=1
+            //
+            // Let the counting begin
+            tm0.en=1
+            //
+            // Do at least 1 step
+            n0.val+=dir.val
+        
+        Touch Release Event
+            // Button released, stop counting.
+            tm0.en=0
+        
+Button b2
+    Attributes
+        ID               : 11
+        Scope            : local
+        Send Component ID: disabled
+        State            : unpressed
+        Text             : Show Simple Example
+        Max. Text Size   : 50
+    
+    Events
+        Touch Release Event
+            page 0
+        
+Timer tm0
+    Attributes
+        ID         : 1
+        Scope      : local
+        Period (ms): 50
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            stepSize.val*=dir.val
+            n0.val+=stepSize.val
+            stepSize.val*=dir.val
+            if(speed.val<maxSpeed.val)
+            {
+                speed.val++
+            }
+            countSpeed.val=speed.val/stepSize.val
+            if(countSpeed.val>=maxCountSpeed.val)
+            {
+                stepSize.val++
+            }
+            tm0.tim=basePer.val*inertia.val/speed.val
+        
