@@ -1,0 +1,16 @@
+[
+{
+   "allowPartialDownload" : "false",
+   "version" : "2.2.0.295",
+   "name" : "TivaWare for TM4C SDK",
+   "description" : "Texas Instruments' TM4C12x MCUs offer the industry’s popular ARM® Cortex®-M4F core with scalable memory and package options, a wide array of wired connectivity peripherals, advanced application functions, high performance analog integration, and extensive software solutions. In addition, Texas Instruments offers a complete solution to get to market quickly, with evaluation and development boards, white papers, application notes, an easy-to-use peripheral driver library, and a strong support, sales, and distributor network.</p><p><br><font size=2>LaunchPad, BoosterPack, and TivaWare are trademarks of Texas Instruments.<br>ARM and Cortex are registered trademarks of ARM Limited.<br>microSD is a registered trademark of SD-3C, LLC.<br>OLED is a registered trademark of LG Electronics Inc. Corporation.<br>All other trademarks are the property of their respective owners.</font></p>",
+   "license" : "./EULA.txt",
+   "image" : ".metadata/images/TivaWare.png",
+   "devices" : [
+      "TM4C"
+   ],
+   "metadataVersion" : "3.0.0",
+   "id" : "TivaWare",
+   "type" : "software"
+}
+]
