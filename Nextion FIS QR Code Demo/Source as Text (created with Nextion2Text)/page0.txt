@@ -1,0 +1,215 @@
+Page page0
+    Attributes
+        ID               : 0
+        Scope            : local
+        Send Component ID: disabled
+        Locked           : no
+    
+    Events
+        Postinitialize Event
+            fps.val=0
+            click fps,0
+        
+Variable (string) qrdata
+    Attributes
+        ID            : 2
+        Scope         : local
+        Text          : newtxt
+        Max. Text Size: 10
+    
+Variable (string) temp
+    Attributes
+        ID            : 3
+        Scope         : local
+        Text          : newtxt
+        Max. Text Size: 10
+    
+Number cpu
+    Attributes
+        ID                 : 5
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Value              : 100
+    
+Number fps
+    Attributes
+        ID                 : 8
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Value              : 88
+    
+    Events
+        Touch Release Event
+            if(fps.val<5)
+            {
+                fps.val++
+            }else if(fps.val<30)
+            {
+                fps.val+=5
+            }else
+            {
+                fps.val=0
+            }
+            if(fps.val>0)
+            {
+                tsw animation,0
+                tm0.tim=1000/fps.val
+                tm0.en=1
+            }else
+            {
+                tm0.en=0
+                tm0.tim=1000
+                tsw animation,1
+            }
+        
+Text t0
+    Attributes
+        ID                 : 4
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Text               : CPU:
+        Max. Text Size     : 10
+    
+Text t1
+    Attributes
+        ID                 : 6
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Text               : %
+        Max. Text Size     : 1
+    
+Text t2
+    Attributes
+        ID                 : 7
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Text               : FPS:
+        Max. Text Size     : 10
+    
+    Events
+        Touch Release Event
+            click fps,0
+        
+Text t3
+    Attributes
+        ID                 : 9
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Text               :   (Click to change. 0 is manual, tap background for next frame)
+        Max. Text Size     : 80
+    
+    Events
+        Touch Release Event
+            click fps,0
+        
+Text animation
+    Attributes
+        ID                 : 11
+        Scope              : local
+        Send Component ID  : disabled
+        Associated Keyboard: none
+        Text               : 
+        Max. Text Size     : 0
+    
+    Events
+        Touch Press Event
+            // Note: global variables are only used because it's easier to type. In anything more complex than this demo you'd want to use local variables whereever possible!
+            //
+            // Clear previous qr code
+            fill qrx,qry,qrsize,qrsize,animation.bco
+            // If requested, randomize qrcode properties
+            if(randomize.val!=0)
+            {
+                randomize.val=0
+                randset 30,300
+                qrsize=rand
+                randset 0,65535
+                qrbco=rand
+                qrpco=rand
+            }
+            // Run at constant speed independently of the timer period. The longer the period, the further it jumps on each timeout => movement remains at constant speed.
+            qrx=mdirx*tm0.tim/20+qrx
+            qry=mdiry*tm0.tim/20+qry
+            // Border collision and direction change
+            if(qrx<=0)
+            {
+                qrx=0
+                mdirx=1
+            }else
+            {
+                // +1 because coords range from 0-799, not 1-800.
+                qrx=qrx+qrsize+1
+                if(qrx>=animation.w)
+                {
+                    qrx=b[0].w
+                    mdirx=-1
+                }
+                qrx=qrx-qrsize-1
+            }
+            if(qry<=0)
+            {
+                qry=0
+                mdiry=1
+            }else
+            {
+                // +1 because coords range from 0-799, not 1-800.
+                qry=qry+qrsize+1
+                if(qry>=animation.h)
+                {
+                    qry=cpu.y
+                    mdiry=-1
+                }
+                qry=qry-qrsize-1
+            }
+            // Update QR content
+            covx qrx,temp.txt,3,0
+            qrdata.txt=temp.txt
+            covx qry,temp.txt,3,0
+            qrdata.txt+=", "
+            qrdata.txt+=temp.txt
+            // clear previous qr code and draw new one
+            //ref animation
+            //doevents
+            qrcode qrx,qry,qrsize,qrbco,qrpco,-1,qrdata.txt
+        
+Dual-state Button randomize
+    Attributes
+        ID               : 12
+        Scope            : local
+        Send Component ID: disabled
+        State            : unpressed
+        Text             : Randomize!
+        Max. Text Size   : 10
+    
+    Events
+        Touch Press Event
+            randomize.val=1
+        
+Timer tm0
+    Attributes
+        ID         : 1
+        Scope      : local
+        Period (ms): 100
+        Enabled    : no
+    
+    Events
+        Timer Event
+            click animation,1
+        
+Timer tm1
+    Attributes
+        ID         : 10
+        Scope      : local
+        Period (ms): 500
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            cpu.val=bcpu
+        
