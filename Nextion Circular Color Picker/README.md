@@ -4,6 +4,19 @@
 
 ![Screenshot](Screenshot.png)
 
+## Index
+
+* [Description](#description)
+	* [General](#general)
+	* [The Code (Generator)](#the-code-generator)
+	* [The Nextion Project](#the-nextion-project)
+* [Usage](#usage)
+	* [Code Generator](#code-generator)
+	* [Color Wheel](#color-wheel)
+* [How it works](#how-it-works)
+* [Final Thoughts](#final-thoughts)
+* [License](#license)
+
 ## Description
 
 ### General
@@ -68,6 +81,63 @@ Bad (color field is _on_ the horizontal axis):
 Good (horizontal axis is between the color fields):
 
 ![Color Wheel aligned](Color%20Wheel%20aligned.png)
+
+## How it works
+
+### The Problem
+The big issue to solve is how to get the polar coordinates, meaning, how to get the radius and the angle of the touch position relative to the center of the color wheel (or in other words, the ring and the field within the ring). Usually you'd write something like this: 
+
+```
+x -= x_center
+y -= y_center
+radius = sqrt(x*x + y*y)
+angle  = atan(y / x)
+```
+
+However, Nextion doesn't allow you to use common math functions unless you write them yourself. While this is possible it's a pain in the ass and likely results in very, very slow code. 
+
+### The Solution 
+
+Having discrete color fields instead of a continuous spectrum allows for one important simplification: we don't need to know the exact value of `radius` and `angle`. Only if they're between certain limits. Assuming each ring has a thickness of 10 pixels. Then the second ring would go from `radius = 10` to `radius = 20`, meaning `radius` squared goes from `100` to `400` respectively. And that in turns means that we don't need the square root anymore:
+
+```
+r_squared = x*x + y*y
+if (r_squared < 100)
+{
+	ring = 0
+}
+else if (r_squared < 400)
+{
+	ring = 1
+}
+...
+```
+
+So instead of having to use the square root at runtime, we need to square the limits (`100`, `400`, ...) when writing the code. 
+
+The same works for the angle. Here, too, we don't need to actually convert `y / x` to `angle` but can directly check if `y / x` is within a certain range. 
+
+### One more thing...
+
+Acutally one more issue. In fact, the code posted [above](#the-problem) doesn't work because `tan(alpha) == tan(alpha + 180deg)`. Meaning, it would only work on half the wheel. In the other half it would point again to the first half. So we need another trick to figure out in which half we are.
+
+I'm going a bit further by determining the quadrant by checking the sign of the relative `x` and `y` coordinates (in the first quadrant `x` and `y` are positive, in the third both are negative f.ex.). Then, within each quadrant I can use the method described above to determine the actual angle relative to the quadrant. Add both together and voila, 360 degrees covered. This is also the reason why you need a multiple of 4 for the number of field per ring; they must lign up with the limits of the quadrants.
+
+### Automation
+
+While the tricks described here do make things a lot easier, it's still a lot of work to write the code - especially since you have to calculate all the squared radius values and all the tangents of the angles. That's why I wrote the python script. It automates this process and generates the code for you for an arbitrary number of color fields. It's basically just copying a template and adding the numbers, so not much to see there. 
+
+## Final Thoughts
+
+This was a cool project with some out of the box thinking but let's step back for a second... We need to write _code generators_ and use hacks to make Nextion usable? The actual solution could be so damn simple: let me read the color of the pixel the user touched. Boom. One could have arbitrarily shaped color fields and always get the exact color the user touched with _no effort_. But no, that would be too simple. The next best solution, calculating the values, could be rather easy again. But nooo. Not with Nextion. Math functions? Nope. Heck you can't even use `()` in your Nextion math. 
+
+As so often it becomes a huge pain in the ass because Nextion is insanely limited. And I mean that litterally. If you can't come up with scripts, hacks and workarounds you're risking to loose sanity. That shouldn't be as normal as it is for Nextion users...
+
+Or, to quote their forum admin ([Source](https://nextion.tech/forums/topic/where-are-the-solidworks-models-for-the-displays/) requires login to see; otherwise it shows you an error 404): 
+
+> The Nextion itself is a **very quality device** at a very economical price.
+
+Amen.
 
 ## License
 
