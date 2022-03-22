@@ -1,0 +1,4 @@
+# Exclude Nuitka Build Folders
+*.onefile-build
+*.dist
+*.build
