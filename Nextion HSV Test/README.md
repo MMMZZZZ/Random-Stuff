@@ -2,7 +2,7 @@
 
 ## Description
 
-Simple demonstration of how to do a HSV color picker in Nextion. 
+Simple demonstration of how to do a HSV color picker in Nextion. Note: there's also a [version with a circular color picker](/Nextion%20Circular%20Color%20Picker).
 
 ![Preview](/Nextion%20HSV%20Test/Nextion%20HSV%20Color%20Picker%20-%20Preview.png)
 
