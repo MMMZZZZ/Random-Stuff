@@ -4,4 +4,4 @@ A member of the UNUF wanted to create a "secure" login mechanism on Nextion that
 
 This folder contains the original "secure" proof-of-concept file as well as versions that I've modified using TFTTool and a hex editor. 
 
-Details in the UNUF forum: 
+Details in the UNUF forum: https://unofficialnextion.com/t/password-protection/386/10?u=max
